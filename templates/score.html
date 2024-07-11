@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score {{ id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .scoreboard {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .score {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+        button {
+            font-size: 1.5em;
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="scoreboard">
+        <div class="score" id="score">0</div>
+        <button onclick="updateScore(1)">+1</button>
+        <button onclick="updateScore(-1)">-1</button>
+    </div>
+
+    <div class="scoreboard">
+        <div class="score" id="score">0</div>
+        <button onclick="updateScore(1)">+1</button>
+        <button onclick="updateScore(-1)">-1</button>
+    </div>
+
+    <div class="scoreboard">
+        <div class="score" id="score">0</div>
+        <button onclick="updateScore(1)">+1</button>
+        <button onclick="updateScore(-1)">-1</button>
+    </div>
+
+    <script>
+        const scoreElement = document.getElementById('score');
+        const id = {{ id }};
+
+        // 當頁面加載時獲取當前分數
+        fetch(`/score/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                scoreElement.textContent = data.score;
+            });
+
+        // 定義更新比分的函數
+        function updateScore(change) {
+            const newScore = parseInt(scoreElement.textContent) + change;
+            fetch(`/score/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ score: newScore })
+            })
+            .then(response => response.json())
+            .then(data => {
+                scoreElement.textContent = data.score;
+            })
+            .catch(error => {
+                console.error('Error updating score:', error);
+            });
+        }
+    </script>
+</body>
+</html>

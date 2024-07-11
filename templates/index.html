@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 1.2em;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .logout {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Score System</h1>
+    <ul>
+        <li><a href="/scorepage/1">Score 1</a></li>
+        <li><a href="/scorepage/2">Score 2</a></li>
+        <li><a href="/scorepage/3">Score 3</a></li>
+        <li><a href="/scorepage/4">Score 4</a></li>
+        <li><a href="/scorepage/5">Score 5</a></li>
+    </ul>
+    <a href="/admin" class="admin">Admin Page</a>
+    <a href="/logout" class="logout">Logout</a>
+</body>
+</html>
