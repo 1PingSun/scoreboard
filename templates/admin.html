@@ -71,6 +71,30 @@
             color: #888;
             margin-top: 20px;
         }
+        .edit-button {
+            margin-left: 10px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+        .save-button {
+            margin-left: 10px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+        .save-button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
@@ -80,8 +104,6 @@
 
     <script>
         const scoresElement = document.getElementById('scores');
-        const timestampElement = document.getElementById('timestamp');
-
         let lastUpdated = new Date();
 
         function fetchScores() {
@@ -101,35 +123,27 @@
                         const scoreboardContent = document.createElement('div');
                         scoreboardContent.className = 'scoreboard-content';
 
-                        const team1Name = document.createElement('div');
-                        team1Name.className = 'team-name';
-                        team1Name.textContent = score[1];
-                        scoreboardContent.appendChild(team1Name);
+                        const team1NameGroup = createTeamNameGroup(score[1], score[0], 1);
+                        scoreboardContent.appendChild(team1NameGroup);
 
                         for (let i = 3; i <= 6; i++) {
                             const scoreGroup = document.createElement('div');
                             scoreGroup.className = 'score-group';
 
+                            const scoreElement = document.createElement('div');
                             if (i == 3 || i == 6) {
-                                const scoreElement = document.createElement('div');
                                 scoreElement.className = 'score';
-                                scoreElement.textContent = `${score[i]}`;
-                                scoreGroup.appendChild(scoreElement);
-                            }
-                            if (i == 4 || i == 5) {
-                                const scoreElement = document.createElement('div');
+                            } else {
                                 scoreElement.className = 'scorePart';
-                                scoreElement.textContent = `${score[i]}`;
-                                scoreGroup.appendChild(scoreElement);
                             }
+                            scoreElement.textContent = `${score[i]}`;
+                            scoreGroup.appendChild(scoreElement);
 
                             scoreboardContent.appendChild(scoreGroup);
                         }
 
-                        const team2Name = document.createElement('div');
-                        team2Name.className = 'team-name';
-                        team2Name.textContent = score[2];
-                        scoreboardContent.appendChild(team2Name);
+                        const team2NameGroup = createTeamNameGroup(score[2], score[0], 2);
+                        scoreboardContent.appendChild(team2NameGroup);
 
                         scoreboard.appendChild(scoreboardContent);
                         scoresElement.appendChild(scoreboard);
@@ -142,14 +156,79 @@
                 });
         }
 
-        setInterval(fetchScores, 500);
+        function createTeamNameGroup(name, scoreId, teamIndex) {
+            const teamNameGroup = document.createElement('div');
+            teamNameGroup.className = 'score-group';
 
-        // 初始獲取分數
-        fetchScores();
+            const teamName = document.createElement('span');
+            teamName.className = 'team-name';
+            teamName.textContent = name;
+
+            const editButton = document.createElement('button');
+            editButton.className = 'edit-button';
+            editButton.textContent = 'Edit';
+            editButton.onclick = () => editTeamName(teamName, scoreId, teamIndex, editButton);
+
+            teamNameGroup.appendChild(teamName);
+            teamNameGroup.appendChild(editButton);
+
+            return teamNameGroup;
+        }
+
+        function editTeamName(teamNameElement, scoreId, teamIndex, editButton) {
+            const currentName = teamNameElement.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentName;
+            input.className = 'team-name';
+
+            const saveButton = document.createElement('button');
+            saveButton.className = 'save-button';
+            saveButton.textContent = 'Save';
+            saveButton.onclick = () => saveTeamName(input, scoreId, teamIndex, teamNameElement, editButton, saveButton);
+
+            teamNameElement.replaceWith(input);
+            editButton.replaceWith(saveButton);
+        }
+
+        function saveTeamName(inputElement, scoreId, teamIndex, teamNameElement, editButton, saveButton) {
+            const newName = inputElement.value;
+
+            fetch(`/update-team-name/${scoreId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ teamIndex, newName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                teamNameElement.textContent = newName;
+                inputElement.replaceWith(teamNameElement);
+                saveButton.replaceWith(editButton);
+            })
+            .catch(error => {
+                console.error('Error updating team name:', error);
+            });
+        }
+
+        function updateTimestamp() {
+            const now = new Date();
+            const secondsAgo = Math.round((now - lastUpdated) / 1000);
+            const timestampElement = document.getElementById('timestamp');
+            if (timestampElement) {
+                timestampElement.textContent = `Last updated: ${secondsAgo} seconds ago`;
+            }
+        }
 
         function goToHome() {
             window.location.href = '/';
         }
+
+        setInterval(fetchScores, 5000);
+        setInterval(updateTimestamp, 1000);
+
+        fetchScores();
     </script>
 </body>
 </html>

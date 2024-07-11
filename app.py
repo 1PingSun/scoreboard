@@ -108,6 +108,28 @@ def update_score(id):
     except Exception as e:
         print(f"Error updating score: {e}")
         return jsonify({'error': 'Internal server error'}), 500
+    
+# 更新隊伍名稱
+@app.route('/update-team-name/<int:id>', methods=['POST'])
+@login_required
+def update_team_name(id):
+    try:
+        team_index = request.json.get('teamIndex')
+        new_name = request.json.get('newName')
+        if team_index not in [1, 2] or not new_name:
+            return jsonify({'error': 'Invalid team index or name'}), 400
+
+        with sqlite3.connect('database.db') as conn:
+            cursor = conn.cursor()
+            if team_index == 1:
+                cursor.execute('UPDATE scores SET team1_name = ? WHERE id = ?', (new_name, id))
+            elif team_index == 2:
+                cursor.execute('UPDATE scores SET team2_name = ? WHERE id = ?', (new_name, id))
+            conn.commit()
+            return jsonify({'id': id, 'teamIndex': team_index, 'newName': new_name})
+    except Exception as e:
+        print(f"Error updating team name: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 # 渲染首頁
 @app.route('/')
