@@ -19,20 +19,55 @@
             color: #333;
         }
         .scores {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             background-color: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .scoreboard {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .score-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 20px;
+        }
         .score {
-            font-size: 1.5em;
+            font-size: 4em;
+            margin: 10px 0;
+        }
+        .scorePart {
+            font-size: 2em;
             margin: 10px 0;
         }
         .timestamp {
             font-size: 1em;
             color: #888;
             margin-top: 20px;
+        }
+        button {
+            font-size: 1.2em;
+            padding: 5px 10px;
+            margin: 5px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -53,10 +88,30 @@
                 .then(data => {
                     scoresElement.innerHTML = '';
                     data.forEach(score => {
-                        const scoreElement = document.createElement('div');
-                        scoreElement.className = 'score';
-                        scoreElement.textContent = `Score ${score[0]}: ${score[1]}`;
-                        scoresElement.appendChild(scoreElement);
+                        const scoreboard = document.createElement('div');
+                        scoreboard.className = 'scoreboard';
+
+                        for (let i = 1; i <= 4; i++) {
+                            const scoreGroup = document.createElement('div');
+                            scoreGroup.className = 'score-group';
+
+                            if(i == 1 || i == 4){
+                                const scoreElement = document.createElement('div');
+                                scoreElement.className = 'score';
+                                scoreElement.textContent = `${score[i]}`;
+                                scoreGroup.appendChild(scoreElement);
+                            }
+                            if(i == 2 || i == 3){
+                                const scoreElement = document.createElement('div');
+                                scoreElement.className = 'scorePart';
+                                scoreElement.textContent = `${score[i]}`;
+                                scoreGroup.appendChild(scoreElement);
+                            }
+
+                            scoreboard.appendChild(scoreGroup);
+                        }
+
+                        scoresElement.appendChild(scoreboard);
                     });
                     lastUpdated = new Date();
                     updateTimestamp();

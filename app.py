@@ -28,12 +28,15 @@ def init_db():
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS scores (
                 id INTEGER PRIMARY KEY,
-                score INTEGER NOT NULL
+                score1 INTEGER NOT NULL,
+                score2 INTEGER NOT NULL,
+                score3 INTEGER NOT NULL,
+                score4 INTEGER NOT NULL
             )
         ''')
         # 確保有五筆數據
         for i in range(1, 6):
-            cursor.execute('INSERT OR IGNORE INTO scores (id, score) VALUES (?, ?)', (i, 0))
+            cursor.execute('INSERT OR IGNORE INTO scores (id, score1, score2, score3, score4) VALUES (?, ?, ?, ?, ?)', (i, 0, 0, 0, 0))
         conn.commit()
 
 # 登錄頁面
@@ -62,10 +65,10 @@ def get_score(id):
     try:
         with sqlite3.connect('database.db') as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT score FROM scores WHERE id = ?', (id,))
-            score = cursor.fetchone()
-            if score:
-                return jsonify({'id': id, 'score': score[0]})
+            cursor.execute('SELECT score1, score2, score3, score4 FROM scores WHERE id = ?', (id,))
+            scores = cursor.fetchone()
+            if scores:
+                return jsonify({'id': id, 'scores': scores})
             else:
                 return jsonify({'error': 'Score not found'}), 404
     except Exception as e:
@@ -77,15 +80,15 @@ def get_score(id):
 @login_required
 def update_score(id):
     try:
-        new_score = request.json.get('score')
-        if new_score is None:
-            return jsonify({'error': 'No score provided'}), 400
+        new_scores = request.json.get('scores')
+        if not new_scores or len(new_scores) != 4:
+            return jsonify({'error': 'Invalid scores provided'}), 400
 
         with sqlite3.connect('database.db') as conn:
             cursor = conn.cursor()
-            cursor.execute('UPDATE scores SET score = ? WHERE id = ?', (new_score, id))
+            cursor.execute('UPDATE scores SET score1 = ?, score2 = ?, score3 = ?, score4 = ? WHERE id = ?', (*new_scores, id))
             conn.commit()
-            return jsonify({'id': id, 'score': new_score})
+            return jsonify({'id': id, 'scores': new_scores})
     except Exception as e:
         print(f"Error updating score: {e}")
         return jsonify({'error': 'Internal server error'}), 500
@@ -97,7 +100,7 @@ def get_all_scores():
     try:
         with sqlite3.connect('database.db') as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT id, score FROM scores')
+            cursor.execute('SELECT id, score1, score2, score3, score4 FROM scores')
             scores = cursor.fetchall()
             return jsonify(scores)
     except Exception as e:
@@ -124,4 +127,4 @@ def admin_page():
 
 if __name__ == '__main__':
     init_db()
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8080)
