@@ -32,10 +32,10 @@
             margin: 0 20px;
         }
         .team-name {
-            font-size: 2em !important;
-            font-weight: bold !important;
-            color: #333 !important;
-            margin-bottom: 10px !important;
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
         }
         .score {
             font-size: 10em;
@@ -50,9 +50,9 @@
             justify-content: space-around;
         }
         button {
-            font-size: 1.2em;
-            padding: 5px 10px;
-            margin: 5px;
+            font-size: 1.75em;
+            padding: 10px 15px;
+            margin: 10px;
             background-color: #007BFF;
             color: white;
             border: none;
@@ -74,6 +74,7 @@
                 <button onclick="updateScore(1, 1)">+1</button>
                 <button onclick="updateScore(-1, 1)">-1</button>
             </div>
+            <button onclick="resetScore(1)">Reset</button>
         </div>
         <div class="score-group">
             <div class="scorePart" id="score2">0</div>
@@ -81,6 +82,7 @@
                 <button onclick="updateScore(1, 2)">+1</button>
                 <button onclick="updateScore(-1, 2)">-1</button>
             </div>
+            <button onclick="resetScore(2)">Reset</button>
         </div>
         <div class="score-group">
             <div class="scorePart" id="score3">0</div>
@@ -88,6 +90,7 @@
                 <button onclick="updateScore(1, 3)">+1</button>
                 <button onclick="updateScore(-1, 3)">-1</button>
             </div>
+            <button onclick="resetScore(3)">Reset</button>
         </div>
         <div class="score-group">
             <div id="team2_name" class="team-name">Team 2</div>
@@ -96,6 +99,7 @@
                 <button onclick="updateScore(1, 4)">+1</button>
                 <button onclick="updateScore(-1, 4)">-1</button>
             </div>
+            <button onclick="resetScore(4)">Reset</button>
         </div>
     </div>
 
@@ -146,6 +150,40 @@
             .catch(error => {
                 console.error('Error updating score:', error);
             });
+        }
+
+        // 定義重置比分的函數
+        function resetScore(scoreIndex) {
+            if (confirm("Are you sure you want to reset this score?")) {
+                const newScores = scoreElements.map((el, i) => {
+                    if (i === scoreIndex - 1) {
+                        return 0;
+                    }
+                    return parseInt(el.textContent);
+                });
+
+                fetch(`/score/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ scores: newScores })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const scores = data.scores;
+                    for (let i = 0; i < scores.length; i++) {
+                        scoreElements[i].textContent = scores[i];
+                    }
+                })
+                .catch(error => {
+                    console.error('Error resetting score:', error);
+                });
+            }
+        }
+
+        function goToHome() {
+            window.location.href = '/';
         }
     </script>
 </body>

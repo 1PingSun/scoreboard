@@ -9,7 +9,7 @@ app.config['SECRET_KEY'] = 'secret_key'
 
 # 用戶資料
 users = {
-    "admin": generate_password_hash("password")
+    "admin": generate_password_hash("password1")
 }
 
 # 基於 Cookie 的登錄驗證
@@ -129,4 +129,4 @@ def admin_page():
 
 if __name__ == '__main__':
     init_db()
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8080, debug=True)
