@@ -28,6 +28,8 @@ def init_db():
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS scores (
                 id INTEGER PRIMARY KEY,
+                team1_name TEXT NOT NULL,
+                team2_name TEXT NOT NULL,
                 score1 INTEGER NOT NULL,
                 score2 INTEGER NOT NULL,
                 score3 INTEGER NOT NULL,
@@ -36,7 +38,7 @@ def init_db():
         ''')
         # 確保有五筆數據
         for i in range(1, 6):
-            cursor.execute('INSERT OR IGNORE INTO scores (id, score1, score2, score3, score4) VALUES (?, ?, ?, ?, ?)', (i, 0, 0, 0, 0))
+            cursor.execute('INSERT OR IGNORE INTO scores (id, team1_name, team2_name, score1, score2, score3, score4) VALUES (?, ?, ?, ?, ?, ?, ?)', (i, f'Team {i}A', f'Team {i}B', 0, 0, 0, 0))
         conn.commit()
 
 # 登錄頁面
@@ -65,14 +67,28 @@ def get_score(id):
     try:
         with sqlite3.connect('database.db') as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT score1, score2, score3, score4 FROM scores WHERE id = ?', (id,))
+            cursor.execute('SELECT team1_name, team2_name, score1, score2, score3, score4 FROM scores WHERE id = ?', (id,))
             scores = cursor.fetchone()
             if scores:
-                return jsonify({'id': id, 'scores': scores})
+                return jsonify({'id': id, 'team1_name': scores[0], 'team2_name': scores[1], 'scores': scores[2:]})
             else:
                 return jsonify({'error': 'Score not found'}), 404
     except Exception as e:
         print(f"Error fetching score: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+# 獲取所有分數
+@app.route('/scores', methods=['GET'])
+@login_required
+def get_all_scores():
+    try:
+        with sqlite3.connect('database.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT id, team1_name, team2_name, score1, score2, score3, score4 FROM scores')
+            scores = cursor.fetchall()
+            return jsonify(scores)
+    except Exception as e:
+        print(f"Error fetching all scores: {e}")
         return jsonify({'error': 'Internal server error'}), 500
 
 # 更新分數
@@ -91,20 +107,6 @@ def update_score(id):
             return jsonify({'id': id, 'scores': new_scores})
     except Exception as e:
         print(f"Error updating score: {e}")
-        return jsonify({'error': 'Internal server error'}), 500
-
-# 獲取所有分數
-@app.route('/scores', methods=['GET'])
-@login_required
-def get_all_scores():
-    try:
-        with sqlite3.connect('database.db') as conn:
-            cursor = conn.cursor()
-            cursor.execute('SELECT id, score1, score2, score3, score4 FROM scores')
-            scores = cursor.fetchall()
-            return jsonify(scores)
-    except Exception as e:
-        print(f"Error fetching all scores: {e}")
         return jsonify({'error': 'Internal server error'}), 500
 
 # 渲染首頁

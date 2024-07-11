@@ -29,19 +29,34 @@
         }
         .scoreboard {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             background-color: #fff;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .scoreboard-title {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .scoreboard-content {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
         }
         .score-group {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin: 0 20px;
+        }
+        .team-name {
+            font-size: 1.5em;
+            margin-bottom: 10px;
         }
         .score {
             font-size: 4em;
@@ -55,19 +70,6 @@
             font-size: 1em;
             color: #888;
             margin-top: 20px;
-        }
-        button {
-            font-size: 1.2em;
-            padding: 5px 10px;
-            margin: 5px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
         }
     </style>
 </head>
@@ -91,26 +93,45 @@
                         const scoreboard = document.createElement('div');
                         scoreboard.className = 'scoreboard';
 
-                        for (let i = 1; i <= 4; i++) {
+                        const title = document.createElement('div');
+                        title.className = 'scoreboard-title';
+                        title.textContent = `Score ${score[0]}`;
+                        scoreboard.appendChild(title);
+
+                        const scoreboardContent = document.createElement('div');
+                        scoreboardContent.className = 'scoreboard-content';
+
+                        const team1Name = document.createElement('div');
+                        team1Name.className = 'team-name';
+                        team1Name.textContent = score[1];
+                        scoreboardContent.appendChild(team1Name);
+
+                        for (let i = 3; i <= 6; i++) {
                             const scoreGroup = document.createElement('div');
                             scoreGroup.className = 'score-group';
 
-                            if(i == 1 || i == 4){
+                            if (i == 3 || i == 6) {
                                 const scoreElement = document.createElement('div');
                                 scoreElement.className = 'score';
                                 scoreElement.textContent = `${score[i]}`;
                                 scoreGroup.appendChild(scoreElement);
                             }
-                            if(i == 2 || i == 3){
+                            if (i == 4 || i == 5) {
                                 const scoreElement = document.createElement('div');
                                 scoreElement.className = 'scorePart';
                                 scoreElement.textContent = `${score[i]}`;
                                 scoreGroup.appendChild(scoreElement);
                             }
 
-                            scoreboard.appendChild(scoreGroup);
+                            scoreboardContent.appendChild(scoreGroup);
                         }
 
+                        const team2Name = document.createElement('div');
+                        team2Name.className = 'team-name';
+                        team2Name.textContent = score[2];
+                        scoreboardContent.appendChild(team2Name);
+
+                        scoreboard.appendChild(scoreboardContent);
                         scoresElement.appendChild(scoreboard);
                     });
                     lastUpdated = new Date();
