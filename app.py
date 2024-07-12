@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
-from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from functools import wraps
@@ -7,7 +6,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret_key'
-csrf = CSRFProtect(app)
 
 
 # 用戶資料
