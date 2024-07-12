@@ -133,20 +133,38 @@
         let swapped = false;
 
         // 當頁面加載時獲取當前分數
-        fetch(`/score/${id}`)
-            .then(response => response.json())
-            .then(data => {
-                const scores = data.scores;
-                document.getElementById('team1_name').textContent = data.team1_name;
-                document.getElementById('team2_name').textContent = data.team2_name;
-                for (let i = 0; i < scores.length; i++) {
-                    if (i === 1 || i == 2) {
-                        scoreElements[i].textContent = scores[i];
+        function fetchScores() {
+            fetch(`/score/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const scores = data.scores;
+                    console.log("fetchSores")
+                    if (swapped) {
+                        console.log("fetch is true")
+                        document.getElementById('team1_name').textContent = data.team2_name;
+                        document.getElementById('team2_name').textContent = data.team1_name;
                     } else {
-                        scoreElements[i].textContent = scores[i].toString().padStart(2, '0');
+                        console.log("fetch is false")
+                        document.getElementById('team1_name').textContent = data.team1_name;
+                        document.getElementById('team2_name').textContent = data.team2_name;
                     }
-                }
-            });
+                    for (let i = 0; i < scores.length; i++) {
+                        if (i === 1 || i == 2) {
+                            if (swapped) {
+                                scoreElements[i].textContent = scores[3 - i];
+                            } else {
+                                scoreElements[i].textContent = scores[i];
+                            }
+                        } else {
+                            if (swapped) {
+                                scoreElements[i].textContent = scores[3 - i].toString().padStart(2, '0');
+                            } else {
+                                scoreElements[i].textContent = scores[i].toString().padStart(2, '0');
+                            }
+                        }
+                    }
+                });
+            }
 
         // 定義更新比分的函數
         function updateScore(change, scoreIndex) {
@@ -305,6 +323,8 @@
             scoreElements[2].textContent = tempScore2;
         }
 
+        setInterval(fetchScores, 1000);
+        fetchScores();
         function goToHome() {
             window.location.href = '/';
         }
