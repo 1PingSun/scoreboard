@@ -1,3 +1,14 @@
 # scoreboard
 
-這是一個使用 flask 製作的羽球計分板網頁，執行 app.py 後即可運行。
+This is a badminton scoreboard using python flask module.
+
+## How to use?
+
+1. Install module:
+  ```shell
+  pip install -r requirements.txt
+  ```
+2. Run program:
+  ```shell
+  python app.py
+  ```
