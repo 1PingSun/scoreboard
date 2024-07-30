@@ -8,7 +8,7 @@ This is a badminton scoreboard using python flask module.
   ```shell
   pip install -r requirements.txt
   ```
-2. Run program:
+2. Run program, the IP and port information will show in `app.log` file, and the default setting is at `http://localhost:8082/`:
   ```shell
   python app.py
   ```
