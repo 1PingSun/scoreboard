@@ -1,5 +1,7 @@
 # scoreboard
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 This is a badminton scoreboard using python flask module.
 
 ## How to use?
